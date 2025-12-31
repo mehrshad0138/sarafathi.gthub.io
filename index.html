@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sarafathi - ثبت نام کلاس‌های ریاضی و انگلیسی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            position: relative;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .logo-container {
+            margin-bottom: 20px;
+            animation: fadeInScale 1.5s ease-out;
+        }
+        .logo {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.5));
+            transition: all 0.5s ease;
+        }
+        .logo:hover {
+            filter: drop-shadow(0 0 30px rgba(96, 165, 250, 0.8));
+            transform: scale(1.05);
+        }
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: translateY(-50px) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        h1 {
+            font-size: 2.8rem;
+            color: #60a5fa;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(96, 165, 250, 0.3);
+            animation: fadeIn 2s ease-out;
+        }
+        h1 span {
+            color: #93c5fd;
+            font-weight: 700;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h2 {
+            color: #93c5fd;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid #334155;
+            animation: fadeInUp 1s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        button {
+            background: linear-gradient(to right, #3b82f6, #60a5fa);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        #message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .success { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid #22c55e; }
+        .error { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #ef4444; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: #0f172a;
+            padding: 15px;
+            text-align: center;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+        tr:hover {
+            background: #334155;
+        }
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        #logout {
+            width: auto;
+            padding: 10px 25px;
+            margin-top: 20px;
+        }
+        .admin-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #60a5fa;
+            color: #60a5fa;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        .admin-btn:hover {
+            background: #60a5fa;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: #94a3b8;
+        }
+        footer a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        .hidden { display: none; }
+
+        /* ذرات انیمیشنی اطراف لوگو */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="admin-btn" id="adminBtn">پنل ادمین</button>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <header>
+            <div class="logo-container">
+                <img src="https://www.shutterstock.com/image-vector/book-brain-logo-design-mind-260nw-2662026257.jpg" alt="لوگوی sarafathi" class="logo">
+            </div>
+            <h1>sara<span>fathi</span></h1>
+            <p>ثبت نام در کلاس‌های ریاضی و انگلیسی (آنلاین و حضوری)</p>
+        </header>
+
+        <!-- بقیه فرم و پنل‌ها مثل قبل -->
+        <div id="registration" class="card">
+            <form id="regForm">
+                <label for="name">نام و نام خانوادگی کامل:</label>
+                <input type="text" id="name" required placeholder="نام کامل خود را دقیق وارد کنید">
+
+                <label for="phone">شماره تماس (همراه):</label>
+                <input type="tel" id="phone" required placeholder="مثال: 09123456789" pattern="[0-9]{11}" title="شماره موبایل معتبر ۱۱ رقمی وارد کنید">
+
+                <label for="grade">پایه تحصیلی:</label>
+                <select id="grade" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="اول ابتدایی">اول ابتدایی</option>
+                    <option value="دوم ابتدایی">دوم ابتدایی</option>
+                    <option value="سوم ابتدایی">سوم ابتدایی</option>
+                    <option value="چهارم ابتدایی">چهارم ابتدایی</option>
+                    <option value="پنجم ابتدایی">پنجم ابتدایی</option>
+                    <option value="ششم ابتدایی">ششم ابتدایی</option>
+                    <option value="هفتم">هفتم</option>
+                    <option value="هشتم">هشتم</option>
+                    <option value="نهم">نهم</option>
+                    <option value="دهم">دهم</option>
+                    <option value="یازدهم">یازدهم</option>
+                    <option value="دوازدهم">دوازدهم</option>
+                    <option value="فارغ‌التحصیل">فارغ‌التحصیل</option>
+                    <option value="دانشجو">دانشجو</option>
+                    <option value="سایر">سایر</option>
+                </select>
+
+                <label for="subject">درس مورد نظر:</label>
+                <select id="subject" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="ریاضی">ریاضی</option>
+                    <option value="انگلیسی">انگلیسی</option>
+                </select>
+
+                <label for="classType">نوع کلاس:</label>
+                <select id="classType" required>
+                    <option value="">انتخاب کنید</option>
+                    <option value="online">آنلاین</option>
+                    <option value="inperson">حضوری</option>
+                </select>
+
+                <button type="submit">ثبت نام</button>
+            </form>
+            <p id="message"></p>
+        </div>
+
+        <div id="adminLogin" class="card hidden">
+            <h2>ورود به پنل مدیریت</h2>
+            <form id="adminForm">
+                <label for="adminUsername">نام کاربری:</label>
+                <input type="text" id="adminUsername" required>
+
+                <label for="adminPassword">رمز عبور:</label>
+                <input type="password" id="adminPassword" required>
+
+                <button type="submit">ورود</button>
+            </form>
+        </div>
+
+        <div id="adminPanel" class="card hidden">
+            <h2>لیست ثبت نام شدگان</h2>
+            <table id="userTable">
+                <thead>
+                    <tr>
+                        <th>نام کامل</th>
+                        <th>شماره تماس</th>
+                        <th>پایه تحصیلی</th>
+                        <th>درس</th>
+                        <th>نوع کلاس</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="logout">خروج از پنل</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>در صورت نیاز به پشتیبانی یا مشاوره با ما تماس بگیرید:</p>
+        <p><a href="tel:09036125184">09036125184</a></p>
+    </footer>
+
+<script>
+    // اسکریپت ذرات انیمیشنی
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = 300;
+
+    let particles = [];
+    for (let i = 0; i < 50; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 2 + 1,
+            speed: Math.random() * 1 + 0.5
+        });
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(96, 165, 250, 0.6)';
+            ctx.fill();
+
+            p.y -= p.speed;
+            if (p.y < 0) p.y = canvas.height;
+            p.x += Math.sin(p.y / 50) * 2;
+        });
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+    });
+
+    // بقیه اسکریپت‌های قبلی (ثبت نام، ادمین و...)
+    const ADMIN_USERNAME = 'admin1';
+    const ADMIN_PASSWORD = '1234';
+    const USERS_KEY = 'registeredUsers';
+
+    function getUsers() {
+        return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function isUserRegistered(name) {
+        const users = getUsers();
+        return users.some(user => user.name.trim().toLowerCase() === name.trim().toLowerCase());
+    }
+
+    document.getElementById('regForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const grade = document.getElementById('grade').value;
+        const subject = document.getElementById('subject').value;
+        const classType = document.getElementById('classType').value;
+        const messageEl = document.getElementById('message');
+
+        if (!name || !phone || !grade || !subject || !classType) {
+            messageEl.textContent = 'لطفاً تمام فیلدها را پر کنید.';
+            messageEl.className = 'error';
+            return;
+        }
+
+        if (isUserRegistered(name)) {
+            messageEl.textContent = 'شما قبلاً با این نام ثبت نام کرده‌اید.';
+            messageEl.className = 'error';
+            return;
+        }
+
+        const users = getUsers();
+        users.push({ name, phone, grade, subject, classType });
+        saveUsers(users);
+
+        messageEl.textContent = 'ثبت نام شما با موفقیت انجام شد!';
+        messageEl.className = 'success';
+        document.getElementById('regForm').reset();
+    });
+
+    document.getElementById('adminBtn').addEventListener('click', function() {
+        document.getElementById('registration').classList.add('hidden');
+        document.getElementById('adminLogin').classList.remove('hidden');
+    });
+
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+
+        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            document.getElementById('adminLogin').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            loadUsersTable();
+        } else {
+            alert('نام کاربری یا رمز عبور اشتباه است!');
+        }
+    });
+
+    function loadUsersTable() {
+        const tbody = document.getElementById('userTable').querySelector('tbody');
+        tbody.innerHTML = '';
+        const users = getUsers();
+
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">هنوز کسی ثبت نام نکرده است.</td></tr>';
+            return;
+        }
+
+        users.forEach((user, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.name}</td>
+                <td dir="ltr">${user.phone}</td>
+                <td>${user.grade}</td>
+                <td>${user.subject}</td>
+                <td>${user.classType === 'online' ? 'آنلاین' : 'حضوری'}</td>
+                <td><button class="delete-btn" onclick="deleteUser(${index})">حذف</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    window.deleteUser = function(index) {
+        if (confirm('آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟')) {
+            const users = getUsers();
+            users.splice(index, 1);
+            saveUsers(users);
+            loadUsersTable();
+        }
+    };
+
+    document.getElementById('logout').addEventListener('click', function() {
+        document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('registration').classList.remove('hidden');
+    });
+</script>
+
+</body>
+</html>
