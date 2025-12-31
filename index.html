@@ -50,15 +50,10 @@
             color: #60a5fa;
             margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(96, 165, 250, 0.3);
-            animation: fadeIn 2s ease-out;
         }
         h1 span {
             color: #93c5fd;
             font-weight: 700;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
         h2 {
             color: #93c5fd;
@@ -71,11 +66,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(10px);
             border: 1px solid #334155;
-            animation: fadeInUp 1s ease-out;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         form label {
             display: block;
@@ -194,7 +184,6 @@
         }
         .hidden { display: none; }
 
-        /* ذرات انیمیشنی اطراف لوگو */
         #particles-canvas {
             position: absolute;
             top: 0;
@@ -221,14 +210,13 @@
             <p>ثبت نام در کلاس‌های ریاضی و انگلیسی (آنلاین و حضوری)</p>
         </header>
 
-        <!-- بقیه فرم و پنل‌ها مثل قبل -->
         <div id="registration" class="card">
             <form id="regForm">
                 <label for="name">نام و نام خانوادگی کامل:</label>
                 <input type="text" id="name" required placeholder="نام کامل خود را دقیق وارد کنید">
 
                 <label for="phone">شماره تماس (همراه):</label>
-                <input type="tel" id="phone" required placeholder="مثال: 09123456789" pattern="[0-9]{11}" title="شماره موبایل معتبر ۱۱ رقمی وارد کنید">
+                <input type="tel" id="phone" required placeholder="مثال: 09123456789" pattern="[0-9]{11}">
 
                 <label for="grade">پایه تحصیلی:</label>
                 <select id="grade" required>
@@ -307,7 +295,13 @@
     </footer>
 
 <script>
-    // اسکریپت ذرات انیمیشنی
+    // آدرس Worker خودت
+    const WORKER_URL = "https://sarafathi-backend0.javadmavad0138.workers.dev";
+
+    const ADMIN_USERNAME = 'admin1';
+    const ADMIN_PASSWORD = '1234';
+
+    // انیمیشن ذرات
     const canvas = document.getElementById('particles-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -343,54 +337,43 @@
         canvas.width = window.innerWidth;
     });
 
-    // بقیه اسکریپت‌های قبلی (ثبت نام، ادمین و...)
-    const ADMIN_USERNAME = 'admin1';
-    const ADMIN_PASSWORD = '1234';
-    const USERS_KEY = 'registeredUsers';
-
-    function getUsers() {
-        return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
-    }
-
-    function saveUsers(users) {
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-
-    function isUserRegistered(name) {
-        const users = getUsers();
-        return users.some(user => user.name.trim().toLowerCase() === name.trim().toLowerCase());
-    }
-
-    document.getElementById('regForm').addEventListener('submit', function(e) {
+    // ثبت نام
+    document.getElementById('regForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const name = document.getElementById('name').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const grade = document.getElementById('grade').value;
-        const subject = document.getElementById('subject').value;
-        const classType = document.getElementById('classType').value;
+        const data = {
+            name: document.getElementById('name').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            grade: document.getElementById('grade').value,
+            subject: document.getElementById('subject').value,
+            classType: document.getElementById('classType').value
+        };
+
         const messageEl = document.getElementById('message');
 
-        if (!name || !phone || !grade || !subject || !classType) {
-            messageEl.textContent = 'لطفاً تمام فیلدها را پر کنید.';
+        try {
+            const response = await fetch(WORKER_URL + '/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.status === "success") {
+                messageEl.textContent = 'ثبت نام با موفقیت انجام شد! به زودی با شما تماس می‌گیریم 💙';
+                messageEl.className = 'success';
+                this.reset();
+            } else {
+                messageEl.textContent = 'خطا: ' + (result.message || 'نامشخص');
+                messageEl.className = 'error';
+            }
+        } catch (err) {
+            messageEl.textContent = 'مشکل در ارتباط با سرور';
             messageEl.className = 'error';
-            return;
         }
-
-        if (isUserRegistered(name)) {
-            messageEl.textContent = 'شما قبلاً با این نام ثبت نام کرده‌اید.';
-            messageEl.className = 'error';
-            return;
-        }
-
-        const users = getUsers();
-        users.push({ name, phone, grade, subject, classType });
-        saveUsers(users);
-
-        messageEl.textContent = 'ثبت نام شما با موفقیت انجام شد!';
-        messageEl.className = 'success';
-        document.getElementById('regForm').reset();
     });
 
+    // پنل ادمین
     document.getElementById('adminBtn').addEventListener('click', function() {
         document.getElementById('registration').classList.add('hidden');
         document.getElementById('adminLogin').classList.remove('hidden');
@@ -410,36 +393,65 @@
         }
     });
 
-    function loadUsersTable() {
+    async function loadUsersTable() {
         const tbody = document.getElementById('userTable').querySelector('tbody');
-        tbody.innerHTML = '';
-        const users = getUsers();
+        tbody.innerHTML = '<tr><td colspan="6">در حال بارگذاری...</td></tr>';
 
-        if (users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6">هنوز کسی ثبت نام نکرده است.</td></tr>';
-            return;
+        try {
+            const response = await fetch(WORKER_URL + '/admin/data', {
+                headers: {
+                    'Authorization': 'Basic ' + btoa('admin1:1234')
+                }
+            });
+
+            if (response.ok) {
+                const users = await response.json();
+                tbody.innerHTML = '';
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6">هنوز کسی ثبت نام نکرده است.</td></tr>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.name}</td>
+                        <td dir="ltr">${user.phone}</td>
+                        <td>${user.grade}</td>
+                        <td>${user.subject}</td>
+                        <td>${user.class_type === 'online' ? 'آنلاین' : 'حضوری'}</td>
+                        <td><button class="delete-btn" onclick="deleteUser(${user.id})">حذف</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6">خطا در بارگذاری لیست</td></tr>';
+            }
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="6">مشکل ارتباط با سرور</td></tr>';
         }
-
-        users.forEach((user, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${user.name}</td>
-                <td dir="ltr">${user.phone}</td>
-                <td>${user.grade}</td>
-                <td>${user.subject}</td>
-                <td>${user.classType === 'online' ? 'آنلاین' : 'حضوری'}</td>
-                <td><button class="delete-btn" onclick="deleteUser(${index})">حذف</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
     }
 
-    window.deleteUser = function(index) {
+    window.deleteUser = async function(id) {
         if (confirm('آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟')) {
-            const users = getUsers();
-            users.splice(index, 1);
-            saveUsers(users);
-            loadUsersTable();
+            try {
+                const response = await fetch(WORKER_URL + '/admin/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa('admin1:1234')
+                    },
+                    body: JSON.stringify({ id })
+                });
+
+                if (response.ok) {
+                    loadUsersTable();
+                } else {
+                    alert('خطا در حذف');
+                }
+            } catch (err) {
+                alert('مشکل ارتباط');
+            }
         }
     };
 
