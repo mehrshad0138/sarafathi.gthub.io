@@ -243,6 +243,7 @@
                     <option value="">انتخاب کنید</option>
                     <option value="ریاضی">ریاضی</option>
                     <option value="انگلیسی">انگلیسی</option>
+                    <option value="هر دو">هر دو (ریاضی و انگلیسی)</option>
                 </select>
 
                 <label for="classType">نوع کلاس:</label>
@@ -295,13 +296,13 @@
     </footer>
 
 <script>
-    // آدرس Worker خودت
+    // آدرس Worker
     const WORKER_URL = "https://sarafathi-backend0.javadmavad0138.workers.dev";
 
     const ADMIN_USERNAME = 'admin1';
     const ADMIN_PASSWORD = '1234';
 
-    // انیمیشن ذرات
+    // انیمیشن ذرات (همون قبلی)
     const canvas = document.getElementById('particles-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -373,7 +374,7 @@
         }
     });
 
-    // پنل ادمین
+    // پنل ادمین (همون قبلی با نمایش درس "هر دو")
     document.getElementById('adminBtn').addEventListener('click', function() {
         document.getElementById('registration').classList.add('hidden');
         document.getElementById('adminLogin').classList.remove('hidden');
