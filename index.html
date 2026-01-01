@@ -55,7 +55,7 @@
             color: #93c5fd;
             font-weight: 700;
         }
-        h2 {
+        h2, h3 {
             color: #93c5fd;
             margin-bottom: 20px;
         }
@@ -151,22 +151,20 @@
         #logout {
             width: auto;
             padding: 10px 25px;
-            margin-top: 20px;
+            margin-top: 40px;
         }
-        .admin-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
+        #adminBtn {
             background: rgba(59, 130, 246, 0.2);
             border: 1px solid #60a5fa;
             color: #60a5fa;
-            padding: 10px 20px;
+            padding: 14px 20px;
             border-radius: 12px;
             cursor: pointer;
-            z-index: 100;
             transition: all 0.3s;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
-        .admin-btn:hover {
+        #adminBtn:hover {
             background: #60a5fa;
             color: white;
         }
@@ -196,8 +194,6 @@
     </style>
 </head>
 <body>
-
-    <button class="admin-btn" id="adminBtn">پنل ادمین</button>
 
     <canvas id="particles-canvas"></canvas>
 
@@ -256,16 +252,19 @@
                 <button type="submit">ثبت نام</button>
             </form>
             <p id="message"></p>
+
+            <!-- دکمه پنل ادمین زیر فرم ثبت‌نام -->
+            <button id="adminBtn">ورود به پنل ادمین</button>
         </div>
 
         <div id="adminLogin" class="card hidden">
             <h2>ورود به پنل مدیریت</h2>
             <form id="adminForm">
                 <label for="adminUsername">نام کاربری:</label>
-                <input type="text" id="adminUsername" required>
+                <input type="text" id="adminUsername" required placeholder="admin">
 
                 <label for="adminPassword">رمز عبور:</label>
-                <input type="password" id="adminPassword" required>
+                <input type="password" id="adminPassword" required placeholder="Mm1234">
 
                 <button type="submit">ورود</button>
             </form>
@@ -273,19 +272,49 @@
 
         <div id="adminPanel" class="card hidden">
             <h2>لیست ثبت نام شدگان</h2>
-            <table id="userTable">
+
+            <h3>کلاس‌های ریاضی</h3>
+            <table id="mathTable">
                 <thead>
                     <tr>
                         <th>نام کامل</th>
                         <th>شماره تماس</th>
                         <th>پایه تحصیلی</th>
-                        <th>درس</th>
                         <th>نوع کلاس</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
+
+            <h3>کلاس‌های انگلیسی</h3>
+            <table id="englishTable">
+                <thead>
+                    <tr>
+                        <th>نام کامل</th>
+                        <th>شماره تماس</th>
+                        <th>پایه تحصیلی</th>
+                        <th>نوع کلاس</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <h3>کلاس‌های هر دو (ریاضی و انگلیسی)</h3>
+            <table id="bothTable">
+                <thead>
+                    <tr>
+                        <th>نام کامل</th>
+                        <th>شماره تماس</th>
+                        <th>پایه تحصیلی</th>
+                        <th>نوع کلاس</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
             <button id="logout">خروج از پنل</button>
         </div>
     </div>
@@ -296,13 +325,12 @@
     </footer>
 
 <script>
-    // آدرس Worker
     const WORKER_URL = "https://sarafathi-backend0.javadmavad0138.workers.dev";
 
-    const ADMIN_USERNAME = 'admin1';
-    const ADMIN_PASSWORD = '1234';
+    const ADMIN_USERNAME = 'admin';
+    const ADMIN_PASSWORD = 'Mm1234';
 
-    // انیمیشن ذرات (همون قبلی)
+    // انیمیشن ذرات
     const canvas = document.getElementById('particles-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -374,7 +402,7 @@
         }
     });
 
-    // پنل ادمین (همون قبلی با نمایش درس "هر دو")
+    // ورود به پنل ادمین
     document.getElementById('adminBtn').addEventListener('click', function() {
         document.getElementById('registration').classList.add('hidden');
         document.getElementById('adminLogin').classList.remove('hidden');
@@ -395,21 +423,28 @@
     });
 
     async function loadUsersTable() {
-        const tbody = document.getElementById('userTable').querySelector('tbody');
-        tbody.innerHTML = '<tr><td colspan="6">در حال بارگذاری...</td></tr>';
-
         try {
             const response = await fetch(WORKER_URL + '/admin/data', {
                 headers: {
-                    'Authorization': 'Basic ' + btoa('admin1:1234')
+                    'Authorization': 'Basic ' + btoa(ADMIN_USERNAME + ':' + ADMIN_PASSWORD)
                 }
             });
 
             if (response.ok) {
                 const users = await response.json();
-                tbody.innerHTML = '';
+
+                const mathTbody = document.querySelector('#mathTable tbody');
+                const englishTbody = document.querySelector('#englishTable tbody');
+                const bothTbody = document.querySelector('#bothTable tbody');
+
+                mathTbody.innerHTML = '';
+                englishTbody.innerHTML = '';
+                bothTbody.innerHTML = '';
+
                 if (users.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6">هنوز کسی ثبت نام نکرده است.</td></tr>';
+                    mathTbody.innerHTML = '<tr><td colspan="5">هیچ ثبت نامی نیست</td></tr>';
+                    englishTbody.innerHTML = '<tr><td colspan="5">هیچ ثبت نامی نیست</td></tr>';
+                    bothTbody.innerHTML = '<tr><td colspan="5">هیچ ثبت نامی نیست</td></tr>';
                     return;
                 }
 
@@ -419,17 +454,23 @@
                         <td>${user.name}</td>
                         <td dir="ltr">${user.phone}</td>
                         <td>${user.grade}</td>
-                        <td>${user.subject}</td>
                         <td>${user.class_type === 'online' ? 'آنلاین' : 'حضوری'}</td>
                         <td><button class="delete-btn" onclick="deleteUser(${user.id})">حذف</button></td>
                     `;
-                    tbody.appendChild(tr);
+
+                    if (user.subject === 'ریاضی') {
+                        mathTbody.appendChild(tr.cloneNode(true));
+                    } else if (user.subject === 'انگلیسی') {
+                        englishTbody.appendChild(tr.cloneNode(true));
+                    } else if (user.subject === 'هر دو') {
+                        bothTbody.appendChild(tr.cloneNode(true));
+                    }
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="6">خطا در بارگذاری لیست</td></tr>';
+                alert('خطا در بارگذاری لیست');
             }
         } catch (err) {
-            tbody.innerHTML = '<tr><td colspan="6">مشکل ارتباط با سرور</td></tr>';
+            alert('مشکل ارتباط با سرور');
         }
     }
 
@@ -440,7 +481,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Basic ' + btoa('admin1:1234')
+                        'Authorization': 'Basic ' + btoa(ADMIN_USERNAME + ':' + ADMIN_PASSWORD)
                     },
                     body: JSON.stringify({ id })
                 });
