@@ -253,7 +253,7 @@
             </form>
             <p id="message"></p>
 
-            <!-- دکمه پنل ادمین زیر فرم ثبت‌نام -->
+            <!-- دکمه ادمین زیر فرم -->
             <button id="adminBtn">ورود به پنل ادمین</button>
         </div>
 
@@ -261,10 +261,10 @@
             <h2>ورود به پنل مدیریت</h2>
             <form id="adminForm">
                 <label for="adminUsername">نام کاربری:</label>
-                <input type="text" id="adminUsername" required placeholder="admin">
+                <input type="text" id="adminUsername" required>
 
                 <label for="adminPassword">رمز عبور:</label>
-                <input type="password" id="adminPassword" required placeholder="Mm1234">
+                <input type="password" id="adminPassword" required>
 
                 <button type="submit">ورود</button>
             </form>
@@ -466,18 +466,16 @@
                         bothTbody.appendChild(tr.cloneNode(true));
                     }
                 });
-            } else {
-                alert('خطا در بارگذاری لیست');
             }
         } catch (err) {
-            alert('مشکل ارتباط با سرور');
+            alert('مشکل در بارگذاری لیست');
         }
     }
 
     window.deleteUser = async function(id) {
         if (confirm('آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟')) {
             try {
-                const response = await fetch(WORKER_URL + '/admin/delete', {
+                await fetch(WORKER_URL + '/admin/delete', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -485,14 +483,9 @@
                     },
                     body: JSON.stringify({ id })
                 });
-
-                if (response.ok) {
-                    loadUsersTable();
-                } else {
-                    alert('خطا در حذف');
-                }
+                loadUsersTable();
             } catch (err) {
-                alert('مشکل ارتباط');
+                alert('خطا در حذف');
             }
         }
     };
